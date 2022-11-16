@@ -10,7 +10,8 @@
 #define KEYGEN_SECRET "fd040105060b111c2d49"
 
 static const uint8_t keygen_pw[] = {0x6d, 0x79, 0x70, 0x61, 0x73, 0x73};
-static const uint8_t commonKey[16] = {0xd7, 0xb0, 0x04, 0x02, 0x65, 0x9b, 0xa2, 0xab, 0xd2, 0xcb, 0x0d, 0xb2, 0x7f, 0xa2, 0xb6, 0x56};
+static const uint8_t commonKey[16] = {0xd7, 0xb0, 0x04, 0x02, 0x65, 0x9b, 0xa2, 0xab, 0xd2, 0xcb, 0x0d, 0xb2, 0x7f,
+                                      0xa2, 0xb6, 0x56};
 
 int char2int(char input) {
     if (input >= '0' && input <= '9')
@@ -54,12 +55,12 @@ void hex(uint64_t i, int digits, char *out) {
     sprintf(out, x, i);
 }
 
-bool generateKey(const char *tid, char *out) {
+bool generate_key(const char *title_id, char *output) {
     char *ret = malloc(33);
     if (ret == NULL)
         return false;
 
-    char *tmp = tid;
+    char *tmp = title_id;
     while (tmp[0] == '0' && tmp[1] == '0')
         tmp += 2;
 
@@ -78,12 +79,13 @@ bool generateKey(const char *tid, char *out) {
     uint8_t key[16];
     mbedtls_md_context_t ctx;
     mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA1), 1);
-    if (mbedtls_pkcs5_pbkdf2_hmac(&ctx, (const unsigned char *) keygen_pw, sizeof(keygen_pw), md5sum, 16, 20, 16, key) != 0)
+    if (mbedtls_pkcs5_pbkdf2_hmac(&ctx, (const unsigned char *) keygen_pw, sizeof(keygen_pw), md5sum, 16, 20, 16,
+                                  key) != 0)
         return false;
 
     uint8_t iv[16];
     for (size_t i = 0, j = 0; j < 8; i += 2, j++)
-        iv[j] = (tid[i] % 32 + 9) % 25 * 16 + (tid[i + 1] % 32 + 9) % 25;
+        iv[j] = (title_id[i] % 32 + 9) % 25 * 16 + (title_id[i + 1] % 32 + 9) % 25;
 
     memset(&iv[8], 0, 8);
     encryptAES(key, 16, commonKey, iv, key);
@@ -92,7 +94,7 @@ bool generateKey(const char *tid, char *out) {
     for (int i = 0; i < 16; i++, tmp += 2)
         sprintf(tmp, "%02x", key[i]);
 
-    sprintf(out, "%s", ret);
+    sprintf(output, "%s", ret);
 
     return ret != NULL;
 }

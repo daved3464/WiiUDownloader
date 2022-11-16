@@ -1,0 +1,121 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ApplicationWindow mainWindow {
+  default-height: 300;
+  default-width: 600;
+  title: "Wii U Downloader";
+  content: Adw.ToastOverlay toast_overlay { 
+    child: Adw.ViewStack content_stack {  
+      vexpand: true;    
+      Box {
+        orientation: vertical;
+        vexpand: true;
+        hexpand: true;
+
+        Adw.HeaderBar main_headerbar { 
+          centering-policy: strict;
+          title-widget: Adw.ViewSwitcherTitle {
+            stack: content_stack;
+            title: bind mainWindow.title no-sync-create;
+          };
+        }
+
+        Box {
+          vexpand: true;
+          hexpand: true;
+          
+          ScrolledWindow {            
+            hexpand: true;
+            min-content-height: 400;
+
+            ColumnView columnView {
+              hexpand: true;
+              show-row-separators: true;
+              show-column-separators: true;
+              reorderable:  true;
+              enable-rubberband: true;        
+            }
+          }
+        }    
+
+        Box {
+          spacing: 4;
+          hexpand: true;
+          halign: center;
+
+          CheckButton decryptContentsButton {
+            label: _("Decrypt contents");
+            receives-default: false;
+          }
+          
+          Button downloadQueueButton {
+            label: _("Download Queue");
+            receives-default: true;
+          }
+
+          Button addToQueueButton {
+            label: _("Add to Queue");
+            receives-default: true;
+          }
+
+          CheckButton usaButton {
+            label: _("USA");
+            receives-default: false;
+            active: true;
+          }
+
+          CheckButton europeButton {
+            label: _("Europe");
+            receives-default: false;
+            active: true;
+          }
+
+          CheckButton japanButton {
+            label: _("Japan");
+            receives-default: false;
+            active: true;
+          }
+
+
+        }
+      }
+    };
+  };
+}
+
+Gtk.Box categoryBox {
+  spacing: 4;
+  halign: center;
+  vexpand: true;
+
+  ToggleButton gamesButton {
+    label: _("Games");
+    receives-default: false;
+    active: true;
+  }
+
+  ToggleButton updatesButton {
+    label: _("Updates");
+    receives-default: false;
+    group: gamesButton;
+  }
+
+  ToggleButton dlcsButton {
+    label: _("DLCs");
+    receives-default: false;
+    group: gamesButton;
+  }
+
+  ToggleButton demoButton {
+    label: _("Demo");
+    receives-default: false;
+    group: gamesButton;
+  }
+
+  ToggleButton allButton {
+    label: _("All");
+    receives-default: false;
+    group: gamesButton;
+  }
+}

@@ -1,7 +1,7 @@
 .vs/
 .vscode/
 .idea/
-build
+build*
 dist
 src/gtitles.c
 
@@ -9,3 +9,8 @@ WiiUDownloader
 WiiUDownloader.exe
 src/wiiudownloader.c
 src/Resources.c
+
+/subprojects/blueprint-compiler
+/subprojects/gtk
+
+.cache

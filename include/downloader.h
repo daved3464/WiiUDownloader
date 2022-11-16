@@ -1,12 +1,13 @@
 #pragma once
 
 #include <stdbool.h>
+#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int downloadTitle(const char *titleID, bool decrypt);
+int download_title(GtkWindow *window, const char *title_id, bool decrypt);
 
 #ifdef __cplusplus
 }

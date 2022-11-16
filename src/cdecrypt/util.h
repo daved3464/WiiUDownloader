@@ -24,8 +24,11 @@
 #endif
 
 #if !defined(_WIN32)
+
 #include <libgen.h>
+
 #endif
+
 #include <stdbool.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -68,11 +71,11 @@
 #endif
 
 #ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 #ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 #ifndef array_size
@@ -90,8 +93,11 @@ char* _dirname_win32(const char* path);
 #define _appname(path) _basename_win32(path, true)
 #define _dirname(path) _dirname_win32(path)
 #else
-char* _basename_unix(const char* path);
-char* _dirname_unix(const char* path);
+
+char *_basename_unix(const char *path);
+
+char *_dirname_unix(const char *path);
+
 #define _basename(path) _basename_unix(path)
 #define _appname(path) _basename_unix(path)
 #define _dirname(path) _dirname_unix(path)
@@ -109,113 +115,104 @@ char* _dirname_unix(const char* path);
 #endif
 
 // Returns the position of the msb. v should be nonzero
-static __inline uint32_t find_msb(uint32_t v)
-{
+static __inline uint32_t find_msb(uint32_t v) {
 #if defined (_MSC_VER)
     DWORD pos;
     _BitScanReverse(&pos, v);
     return pos;
 #else
-    return 31- __builtin_clz(v);
+    return 31 - __builtin_clz(v);
 #endif
 }
 
-static __inline uint16_t getle16(const void* p)
-{
-    return *(const uint16_t*)(const uint8_t*)(p);
+static __inline uint16_t getle16(const void *p) {
+    return *(const uint16_t *) (const uint8_t *) (p);
 }
 
-static __inline void setle16(const void* p, const uint16_t v)
-{
-    *((uint16_t*)p) = v;
+static __inline void setle16(const void *p, const uint16_t v) {
+    *((uint16_t *) p) = v;
 }
 
-static __inline uint16_t getbe16(const void* p)
-{
+static __inline uint16_t getbe16(const void *p) {
     return bswap_uint16(getle16(p));
 }
 
-static __inline void setbe16(const void* p, const uint16_t v)
-{
+static __inline void setbe16(const void *p, const uint16_t v) {
     setle16(p, bswap_uint16(v));
 }
 
-static __inline uint32_t getle24(const void* _p)
-{
-    uint8_t* p = (uint8_t*)_p;
+static __inline uint32_t getle24(const void *_p) {
+    uint8_t *p = (uint8_t *) _p;
     return p[0] | (p[1] << 8) | (p[2] << 16);
 }
 
-static __inline void setle24(const void* _p, const uint32_t v)
-{
-    uint8_t* p = (uint8_t*)_p;
+static __inline void setle24(const void *_p, const uint32_t v) {
+    uint8_t *p = (uint8_t *) _p;
     p[0] = v & 0xff;
     p[1] = (v >> 8) & 0xff;
     p[2] = (v >> 16) & 0xff;
 }
 
-static __inline uint32_t getbe24(const void* _p)
-{
-    uint8_t* p = (uint8_t*)_p;
+static __inline uint32_t getbe24(const void *_p) {
+    uint8_t *p = (uint8_t *) _p;
     return (p[0] << 16) | (p[1] << 8) | p[2];
 }
 
-static __inline void setbe24(const void* _p, const uint32_t v)
-{
-    uint8_t* p = (uint8_t*)_p;
+static __inline void setbe24(const void *_p, const uint32_t v) {
+    uint8_t *p = (uint8_t *) _p;
     p[0] = (v >> 16) & 0xff;
     p[1] = (v >> 8) & 0xff;
     p[2] = v & 0xff;
 }
 
-static __inline uint32_t getle32(const void* p)
-{
-    return *(const uint32_t*)(const uint8_t*)(p);
+static __inline uint32_t getle32(const void *p) {
+    return *(const uint32_t *) (const uint8_t *) (p);
 }
 
-static __inline void setle32(const void* p, const uint32_t v)
-{
-    *((uint32_t*)p) = v;
+static __inline void setle32(const void *p, const uint32_t v) {
+    *((uint32_t *) p) = v;
 }
 
-static __inline uint32_t getbe32(const void* p)
-{
+static __inline uint32_t getbe32(const void *p) {
     return bswap_uint32(getle32(p));
 }
 
-static __inline void setbe32(const void* p, const uint32_t v)
-{
+static __inline void setbe32(const void *p, const uint32_t v) {
     setle32(p, bswap_uint32(v));
 }
 
-static __inline uint64_t getle64(const void* p)
-{
-    return *(const uint64_t*)(const uint8_t*)(p);
+static __inline uint64_t getle64(const void *p) {
+    return *(const uint64_t *) (const uint8_t *) (p);
 }
 
-static __inline void setle64(const void* p, const uint64_t v)
-{
-    *((uint64_t*)p) = v;
+static __inline void setle64(const void *p, const uint64_t v) {
+    *((uint64_t *) p) = v;
 }
-static __inline uint64_t getbe64(const void* p)
-{
+
+static __inline uint64_t getbe64(const void *p) {
     return bswap_uint64(getle64(p));
 }
 
-static __inline void setbe64(const void* p, const uint64_t v)
-{
+static __inline void setbe64(const void *p, const uint64_t v) {
     setle64(p, bswap_uint64(v));
 }
 
-bool create_path(char* path);
-char* change_extension(const char* path, const char* extension);
-size_t get_trailing_slash(const char* path);
+bool create_path(char *path);
 
-bool is_file(const char* path);
-bool is_directory(const char* path);
+char *change_extension(const char *path, const char *extension);
 
-uint32_t read_file_max(const char* path, uint8_t** buf, uint32_t max_size);
+size_t get_trailing_slash(const char *path);
+
+bool is_file(const char *path);
+
+bool is_directory(const char *path);
+
+uint32_t read_file_max(const char *path, uint8_t **buf, uint32_t max_size);
+
 #define read_file(path, buf) read_file_max(path, buf, 0)
-uint64_t get_file_size(const char* path);
-void create_backup(const char* path);
-bool write_file(const uint8_t* buf, const uint32_t size, const char* path, const bool backup);
+
+uint64_t get_file_size(const char *path);
+
+void create_backup(const char *path);
+
+bool write_file(const uint8_t *buf, const uint32_t size, const char *path, const bool backup);

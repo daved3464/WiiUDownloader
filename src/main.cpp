@@ -1,19 +1,14 @@
+#include "gtkmm/application.h"
+#include "sigc++/adaptors/bind.h"
+#include "sigc++/functors/mem_fun.h"
 #include <gtkmm.h>
 #include <iostream>
 
-#include <GameList.h>
+#include <WUDApplication.h>
+#include <WUDGameList.h>
 
 int main(int argc, char *argv[]) {
+    WUDApplication app("com.github.Xpl0itU.WiiUDownloader");
 
-    Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
-    Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_resource("/data/wiiudownloader.ui");
-
-    GameList *list = new GameList(builder, getTitleEntries(TITLE_CATEGORY_GAME));
-
-    app->run(*list->getWindow());
-
-    delete list->getWindow();
-    delete list;
-
-    return 0;
+    return app.run(argc, argv);
 }

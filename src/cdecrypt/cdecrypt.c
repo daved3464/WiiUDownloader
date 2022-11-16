@@ -62,15 +62,13 @@ enum ContentType {
     CONTENT_OPTIONAL = (1 << 14),
 };
 
-typedef struct
-{
+typedef struct {
     uint16_t IndexOffset;  //  0  0x204
     uint16_t CommandCount; //  2  0x206
     uint8_t SHA2[32];      //  12 0x208
 } ContentInfo;
 
-typedef struct
-{
+typedef struct {
     uint32_t ID;      //  0  0xB04
     uint16_t Index;   //  4  0xB08
     uint16_t Type;    //  6  0xB0A
@@ -78,8 +76,7 @@ typedef struct
     uint8_t SHA2[32]; //  16 0xB14
 } Content;
 
-typedef struct
-{
+typedef struct {
     uint32_t SignatureType;   // 0x000
     uint8_t Signature[0x100]; // 0x004
 
@@ -128,10 +125,9 @@ struct FST {
 
 struct FEntry {
     union {
-        struct
-        {
-            uint32_t Type : 8;
-            uint32_t NameOffset : 24;
+        struct {
+            uint32_t Type: 8;
+            uint32_t NameOffset: 24;
         };
         uint32_t TypeName;
     };
@@ -152,33 +148,7 @@ struct FEntry {
     uint16_t ContentID;
 };
 
-static GtkWidget *progress_bar;
-static GtkWidget *window;
-
 static char currentFile[255] = "None";
-
-static void progressDialog() {
-    gtk_init(NULL, NULL);
-
-    //Create window
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Download Progress");
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 50);
-    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-    gtk_window_set_modal(GTK_WINDOW(window), TRUE);
-
-    //Create progress bar
-    progress_bar = gtk_progress_bar_new();
-    gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(progress_bar), TRUE);
-    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_bar), "Downloading");
-
-    //Create container for the window
-    GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    gtk_container_add(GTK_CONTAINER(window), main_box);
-    gtk_box_pack_start(GTK_BOX(main_box), progress_bar, FALSE, FALSE, 0);
-
-    gtk_widget_show_all(window);
-}
 
 static bool file_dump(const char *path, void *buf, size_t len) {
     assert(buf != NULL);
@@ -205,27 +175,28 @@ static __inline char ascii(char s) {
 }
 
 static void hexdump(uint8_t *buf, size_t len) {
-    size_t i, off;
-    for (off = 0; off < len; off += 16) {
-        printf("%08x  ", (uint32_t) off);
+    size_t i, offset;
+    for (offset = 0; offset < len; offset += 16) {
+        printf("%08x  ", (uint32_t) offset);
         for (i = 0; i < 16; i++)
-            if ((i + off) >= len)
+            if ((i + offset) >= len)
                 printf("   ");
             else
-                printf("%02x ", buf[off + i]);
+                printf("%02x ", buf[offset + i]);
 
         printf(" ");
         for (i = 0; i < 16; i++) {
-            if ((i + off) >= len)
+            if ((i + offset) >= len)
                 printf(" ");
             else
-                printf("%c", ascii(buf[off + i]));
+                printf("%c", ascii(buf[offset + i]));
         }
         printf("\n");
     }
 }
 
 #define BLOCK_SIZE 0x10000
+
 static bool extract_file_hash(FILE *src, uint64_t part_data_offset, uint64_t file_offset,
                               uint64_t size, const char *path, uint16_t content_id) {
     bool r = false;
@@ -301,18 +272,26 @@ static bool extract_file_hash(FILE *src, uint64_t part_data_offset, uint64_t fil
     }
     r = true;
 
-out:
+    out:
     if (dst != NULL)
         fclose(dst);
     free(enc);
     free(dec);
     return r;
 }
+
 #undef BLOCK_SIZE
 
 #define BLOCK_SIZE 0x8000
-static bool extract_file(FILE *src, uint64_t part_data_offset, uint64_t file_offset,
-                         uint64_t size, const char *path, uint16_t content_id) {
+
+static bool extract_file(
+        FILE *src,
+        uint64_t part_data_offset,
+        uint64_t file_offset,
+        uint64_t size,
+        const char *path,
+        uint16_t content_id) {
+
     bool r = false;
     uint8_t *enc = malloc(BLOCK_SIZE);
     uint8_t *dec = malloc(BLOCK_SIZE);
@@ -334,8 +313,9 @@ static bool extract_file(FILE *src, uint64_t part_data_offset, uint64_t file_off
 
     uint64_t write_size = BLOCK_SIZE;
 
-    if (soffset + size > write_size)
+    if (soffset + size > write_size) {
         write_size = write_size - soffset;
+    }
 
     fseek64(src, part_data_offset + roffset, SEEK_SET);
 
@@ -360,16 +340,35 @@ static bool extract_file(FILE *src, uint64_t part_data_offset, uint64_t file_off
 
     r = true;
 
-out:
+    out:
     if (dst != NULL)
         fclose(dst);
     free(enc);
     free(dec);
     return r;
 }
+
 #undef BLOCK_SIZE
 
-int cdecrypt(int argc, char **argv) {
+void setup_progress_dialog(GtkWindow *window, GtkProgressBar *progress_bar) {
+    // Setup window
+    gtk_window_set_title(GTK_WINDOW(window), "Download Progress");
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 50);
+    gtk_window_set_modal(GTK_WINDOW(window), TRUE);
+
+    // Setup progress bar
+    gtk_progress_bar_set_show_text(GTK_PROGRESS_BAR(progress_bar), TRUE);
+    gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_bar), "Downloading");
+
+    // Setup container for the window
+    GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_box_append(GTK_BOX(main_box), GTK_WIDGET(progress_bar));
+    gtk_window_set_child(GTK_WINDOW(window), main_box);
+
+    gtk_window_present(GTK_WINDOW(window));
+}
+
+int cdecrypt(int argc, char **argv, GtkWindow *window, GtkProgressBar *progress_bar) {
     int r = EXIT_FAILURE;
     char str[PATH_MAX], *tmd_path = NULL, *tik_path = NULL;
     FILE *src = NULL;
@@ -530,16 +529,21 @@ int cdecrypt(int argc, char **argv) {
 
     uint32_t level = 0;
 
-    progressDialog();
+    setup_progress_dialog(window, progress_bar);
+
     for (uint32_t i = 1; i < entries; i++) {
         gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progress_bar), (double) i / (double) entries);
         gtk_progress_bar_set_text(GTK_PROGRESS_BAR(progress_bar), "Decrypting...");
         // force redraw
-        while (gtk_events_pending())
-            gtk_main_iteration();
+
+        while (g_main_context_pending(g_main_context_default())) {
+            g_main_context_iteration(g_main_context_default(), false);
+        }
+
         if (level > 0) {
-            while ((level >= 1) && (l_entry[level - 1] == i))
+            while ((level >= 1) && (l_entry[level - 1] == i)) {
                 level--;
+            }
         }
 
         if (fe[i].Type & 1) {
@@ -569,7 +573,9 @@ int cdecrypt(int argc, char **argv) {
             if ((getbe16(&fe[i].Flags) & 4) == 0)
                 cnt_offset <<= 5;
 
-            printf("Size:%07X Offset:0x%010" PRIx64 " CID:%02X U:%02X %s\n", getbe32(&fe[i].FileLength),
+            printf("Size:%07X Offset:0x%010" PRIx64
+                   " CID:%02X U:%02X %s\n",
+                   getbe32(&fe[i].FileLength),
                    cnt_offset, getbe16(&fe[i].ContentID), getbe16(&fe[i].Flags), &path[short_path]);
 
             uint32_t cnt_file_id = getbe32(&tmd->Contents[getbe16(&fe[i].ContentID)].ID);
@@ -587,7 +593,8 @@ int cdecrypt(int argc, char **argv) {
                     goto out;
                 }
                 if ((getbe16(&fe[i].Flags) & 0x440)) {
-                    if (!extract_file_hash(src, 0, cnt_offset, getbe32(&fe[i].FileLength), path, getbe16(&fe[i].ContentID)))
+                    if (!extract_file_hash(src, 0, cnt_offset, getbe32(&fe[i].FileLength), path,
+                                           getbe16(&fe[i].ContentID)))
                         goto out;
                 } else {
                     if (!extract_file(src, 0, cnt_offset, getbe32(&fe[i].FileLength), path, getbe16(&fe[i].ContentID)))
@@ -600,8 +607,8 @@ int cdecrypt(int argc, char **argv) {
     }
     r = EXIT_SUCCESS;
 
-out:
-    gtk_widget_destroy(GTK_WIDGET(window));
+    out:
+    gtk_window_destroy(GTK_WINDOW(window));
     free(tmd);
     free(tik);
     free(cnt);

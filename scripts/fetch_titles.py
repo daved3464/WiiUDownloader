@@ -16,11 +16,3 @@ urllib.request.install_opener(opener)
 
 checkAndDeleteFile("src/gtitles.c")
 urllib.request.urlretrieve("https://napi.nbg01.v10lator.de/db", "src/gtitles.c")
-
-try:
-    os.mkdir("build")
-except:
-    pass
-os.chdir("build")
-os.system("cmake ..")
-os.system("make")

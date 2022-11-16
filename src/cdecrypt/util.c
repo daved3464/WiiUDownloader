@@ -126,6 +126,7 @@ char *_dirname_unix(const char *path) {
     path_copy[PATH_MAX - 1] = 0;
     return dirname(path_copy);
 }
+
 #endif
 
 bool is_file(const char *path) {
@@ -153,8 +154,7 @@ size_t get_trailing_slash(const char *path) {
     size_t i;
     if ((path == NULL) || (path[0] == 0))
         return 0;
-    for (i = strlen(path) - 1; (i > 0) && ((path[i] != '/') && (path[i] != '\\')); i--)
-        ;
+    for (i = strlen(path) - 1; (i > 0) && ((path[i] != '/') && (path[i] != '\\')); i--);
     return (i == 0) ? 0 : i + 1;
 }
 
@@ -180,7 +180,7 @@ uint32_t read_file_max(const char *path, uint8_t **buf, uint32_t max_size) {
         fprintf(stderr, "ERROR: Can't read '%s'\n", path);
         size = 0;
     }
-out:
+    out:
     fclose(file);
     if (size == 0) {
         free(*buf);
