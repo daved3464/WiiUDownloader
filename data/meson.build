@@ -1,7 +1,16 @@
 blueprints = custom_target('blueprints',
     input: files(
-        'wiiudownloader.blp',
-    ),
+        'main_window.blp',
+        
+        # Column View Blueprints
+        #'column_view_items/index.blp',
+        #'column_view_items/queued.blp',
+        #'column_view_items/title_id.blp',
+        #'column_view_items/kind.blp',
+        #'column_view_items/region.blp',
+        #'column_view_items/name.blp',
+        'column_view.blp',
+        ),
     output: '.',
     command: [
         find_program('blueprint-compiler'), 
@@ -13,8 +22,8 @@ blueprints = custom_target('blueprints',
 )
 
 resources = gnome.compile_resources(
-    'wiiudownloader',
-    'wiiudownloader.gresource.xml',
-    c_name: 'wiiudownloader',
+    'resources',
+    'gresources.xml',
+    c_name: 'resources',
     dependencies: blueprints,
 )

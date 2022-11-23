@@ -1,0 +1,30 @@
+using Gtk 4.0;
+
+ColumnView column_view { 
+    show-column-separators: true;
+    show-row-separators: true;
+    hexpand: true;
+    reorderable: false;   
+    enable-rubberband: true; 
+}
+
+ColumnViewColumn index_column { 
+    title: _("Index");
+}
+
+ColumnViewColumn queued_column { 
+    title: _("Queued");
+}
+ColumnViewColumn title_id_column { 
+    title: _("Title ID");
+}
+ColumnViewColumn kind_column { 
+    title: _("Kind");
+}
+ColumnViewColumn region_column { 
+    title: _("Region");
+}
+ColumnViewColumn name_column { 
+    title: _("Name");
+    expand: true;
+}

@@ -1,0 +1,113 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+Adw.ApplicationWindow main_window {
+  default-height: 300;
+  default-width: 600;
+
+  content: Adw.ToastOverlay toast_overlay {
+    child: Box {
+      orientation: vertical;
+      vexpand: true;
+      hexpand: true;
+
+      Adw.HeaderBar main_headerbar {
+        centering-policy: loose;
+        title-widget: Box {
+          hexpand: true;
+
+          Gtk.SearchBar search_bar {
+            child: Gtk.SearchEntry search_entry {
+              search-delay: 300;
+            };
+          }
+
+          Gtk.Box category_box {
+            spacing: 4;
+            halign: center;
+            vexpand: true;
+
+            ToggleButton games_button {
+              label: _("Games");
+              receives-default: false;
+              active: true;
+            }
+
+            ToggleButton updates_button {
+              label: _("Updates");
+              receives-default: false;
+              group: games_button;
+            }
+
+            ToggleButton dlcs_button {
+              label: _("DLCs");
+              receives-default: false;
+              group: games_button;
+            }
+
+            ToggleButton demo_button {
+              label: _("Demo");
+              receives-default: false;
+              group: games_button;
+            }
+
+            ToggleButton all_button {
+              label: _("All");
+              receives-default: false;
+              group: games_button;
+            }
+          }
+        };
+      }
+
+      ScrolledWindow scrolled_window {
+        hexpand: true;
+        vexpand: true;
+        min-content-height: 400;
+      }
+
+      Box {
+        spacing: 4;
+        hexpand: true;
+        halign: center;
+        margin-bottom: 4;
+        margin-top: 4;
+
+        CheckButton decryptContentsButton {
+          label: _("Decrypt contents");
+          receives-default: false;
+        }
+
+        Button downloadQueueButton {
+          label: _("Download Queue");
+          receives-default: true;
+        }
+
+        Button addToQueueButton {
+          label: _("Add to Queue");
+          receives-default: true;
+        }
+
+        CheckButton usa_button {
+          label: _("USA");
+          receives-default: false;
+          active: false;
+        }
+
+        CheckButton europe_button {
+          label: _("Europe");
+          receives-default: false;
+          active: false;
+        }
+
+        CheckButton japan_button {
+          label: _("Japan");
+          receives-default: false;
+          active: false;
+        }
+      }
+      
+    }; // Box
+  }; // Adw.ToastOverlay
+}

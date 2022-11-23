@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/data">
+    <file preprocess="xml-stripblanks">main_window.ui</file>
+
+    <!-- Column View Resources -->
+    <file preprocess="xml-stripblanks">column_view.ui</file>
+  </gresource>
+</gresources>

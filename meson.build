@@ -5,12 +5,12 @@ project('WiiUDownloader', ['c', 'cpp'],
 compiler = meson.get_compiler('c')
 gnome = import('gnome')
 
-
 c_args = [
     '-D_GNU_SOURCE',    
     '-DAES_ROM_TABLES',    
     '-fno-strict-aliasing',
-    '-pipe'
+    '-pipe',
+    '-DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED'
 ]
 
 cpp_args = [ 
@@ -18,7 +18,8 @@ cpp_args = [
     '-DAES_ROM_TABLES',
     '-fno-strict-aliasing',
     '-pipe',
-    '-Wall'
+    '-Wall',
+    '-DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED'
 ]
 
 if get_option('release')
@@ -33,7 +34,7 @@ dependencies = [
     compiler.find_library('mbedcrypto'),
     compiler.find_library('mbedx509'),    
     dependency('libcurl'),
-    dependency('gtk4', version: '>= 4.6.0'),
+    dependency('gtk4', version: '>= 4.8.0'),
     dependency('gtkmm-4.0'),
     dependency('libadwaita-1'),
 ]
