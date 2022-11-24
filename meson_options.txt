@@ -1,1 +1,3 @@
 option('release', type: 'boolean', value: false)
+option('clang', type: 'boolean', value: false)
+option('mold', type: 'boolean', value: false)
